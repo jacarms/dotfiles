@@ -132,8 +132,17 @@ else
   print "~/.zsh/zsh_env not found"
 fi
 
+if [ -f ~/.zsh/tmux_alias ]; then
+  source ~/.zsh/tmux_alias
+else
+  print "~/.zsh/tmux_alias not found"
+fi
+
+
 export FZF_DEFAULT_COMMAND='rg --files --hidden'
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 if [ -e /Users/jacarm/.nix-profile/etc/profile.d/nix.sh ]; then . /Users/jacarm/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

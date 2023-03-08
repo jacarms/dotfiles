@@ -3,8 +3,21 @@ fd() {
     && cd "$DIR"
 }
 
+gparent() {
+  git show-branch 2>&1 \
+    | sed "s/].*//" \
+    | grep "\*" \
+    | grep -v "$(git rev-parse --abbrev-ref HEAD)" \
+    | head -n1 \
+    | sed "s/^.*\[//"
+  }
+
 vimf() {
     vim $(fzf)
+}
+
+cdfd()  {
+  cd $(find . -type d -print | fzf)
 }
 
 vimfg() {
@@ -16,6 +29,15 @@ cdf() {
   cd "$PROJECT_DIR"/"$DIR";
 }
 
+gdf() {
+  git diff $(git status -s | awk '{print $2}' | fzf)
+}
+
+grsf() {
+  TARGET=$(git status -s | awk '{print $2}' | fzf);
+  git restore $(TARGET);
+}
+
 gprune() {
   git remote prune origin;
   git branch -v | awk '$3 == "[gone]" { print $1 }' | xargs git branch -D;
@@ -24,4 +46,8 @@ gprune() {
 gprf() {
   id="$(gh pr list -A jacarms | fzf | cut -f1)";
   [ -n "$id" ] && gh pr checkout "$id";
+}
+
+lunch () {
+	open "https://canv.am/lunch#$((`date +%u` + 1))"
 }

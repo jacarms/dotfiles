@@ -10,7 +10,7 @@ nnoremap \e :e ~/.ideavimrc<CR>
 nnoremap \r :action IdeaVim.ReloadVimRc.reload<CR>
 
 """ Test running
-nnoremap <leader>t :action Run
+nnoremap <leader>t :action Run<CR>
 
 
 """" Tab navigation

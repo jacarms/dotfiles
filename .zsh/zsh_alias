@@ -29,7 +29,12 @@ alias pull="git pull"
 alias gd="git diff"
 alias gds="git diff --staging"
 alias grevert="git reset --hard"
-alias gcf="git for-each-ref --format='%(refname:short)' refs/heads | fzf | xargs git checkout"
+# Fuzzy checkout (most recent branch first)
+alias gcf="git for-each-ref --sort=-committerdate --format='%(refname:short)' refs/heads | fzf | xargs git checkout"
+# Fuzzy delete
+alias gdelf="git for-each-ref --sort=-committerdate --format='%(refname:short)' refs/heads | fzf | xargs git branch -d"
+# Fuzzy branch search (recent first)
+alias gbf="git for-each-ref --sort=-committerdate --format='%(refname:short)' refs/heads | fzf"
 alias squashf="git for-each-ref --format='%(refname:short)' refs/heads | fzf | xargs git rebase -i --autosquash"
 alias gdelete="git for-each-ref --format='%(refname:short)' refs/heads | fzf | xargs git branch -d"
 alias gdeletef="git for-each-ref --format='%(refname:short)' refs/heads | fzf | xargs git branch -D"
@@ -37,6 +42,7 @@ alias rebase="git rebase green"
 alias green="git checkout green && git pull"
 alias master="git checkout master && git pull"
 alias gmerge="git fetch origin green:green && git merge origin/green"
+alias grbgreen="git fetch origin green && git rebase origin/green"
 alias mmerge="git fetch; git merge origin/master"
 alias grbprev="git rebase @{-1}"
 alias gprev="git checkout -"
@@ -46,6 +52,7 @@ alias gsyncb="git pr-train -rpf"
 alias gabort="git rebase --abort"
 alias gfix="git commit -a --fixup HEAD"
 alias gcont="git rebase --continue"
+alias gacont="git add --all && git rebase --continue"
 alias gpick="git cherry-pick"
 
 alias rocket="gh pr comment -b \":rocket:[canva-check-merge]\""
@@ -63,15 +70,9 @@ alias ils='./production/local/bin/init_local_stack.sh'
 alias btest='./tools/sde/build.sh backends --include campaign_worker && ./backends/bin/start.sh --include campaign_worker'
 alias vim="nvim"
 
+alias sprop="spring-prop-analyser"
+
 export PROJECT_DIR="/Users/jacarm/work"
-
-bt () {
-	bazel test //"$1":all
-}
-
-ut () {
-	bazel test //"$1":unit-tests
-}
 
 build-and-run () {
 	pushd ~/work/canva > /dev/null
@@ -81,3 +82,4 @@ build-and-run () {
 set foldlevel=10
 
 alias tf="/Users/jacarm/work/infrastructure/bin/tf.sh"
+
