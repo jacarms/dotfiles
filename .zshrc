@@ -146,3 +146,4 @@ export FZF_DEFAULT_COMMAND='rg --files --hidden'
 if [ -e /Users/jacarm/.nix-profile/etc/profile.d/nix.sh ]; then . /Users/jacarm/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+export PATH=/opt/homebrew/bin:/Users/jacarm/.nix-profile/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin
