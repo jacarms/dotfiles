@@ -79,6 +79,7 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
   git
+  vi-mode
   zsh-autosuggestions
   zsh-syntax-highlighting
   zsh-z
@@ -146,4 +147,11 @@ export FZF_DEFAULT_COMMAND='rg --files --hidden'
 if [ -e /Users/jacarm/.nix-profile/etc/profile.d/nix.sh ]; then . /Users/jacarm/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-export PATH=/opt/homebrew/bin:/Users/jacarm/.nix-profile/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin
+
+eval $(/opt/homebrew/bin/brew shellenv)
+
+# Nix
+if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
+  . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
+fi
+# End Nix

@@ -13,7 +13,7 @@ gparent() {
   }
 
 vimf() {
-    vim $(fzf)
+    vim $(fzf -m)
 }
 
 cdfd()  {
@@ -30,12 +30,18 @@ cdf() {
 }
 
 gdf() {
-  git diff $(git status -s | awk '{print $2}' | fzf)
+  git diff $(git status -s | awk '{print $2}' | fzf -m)
 }
 
 grsf() {
-  TARGET=$(git status -s | awk '{print $2}' | fzf);
-  git restore $(TARGET);
+    TARGETS=$(git status -s | awk '{print $2}' | fzf -m)
+    echo "$TARGETS" | while IFS= read -r TARGET
+    do
+        if [[ -n "$TARGET" ]]; then
+            echo "Restoring the file: $TARGET"
+            git restore "$TARGET"
+        fi
+    done
 }
 
 gprune() {
@@ -51,3 +57,62 @@ gprf() {
 lunch () {
 	open "https://canv.am/lunch#$((`date +%u` + 1))"
 }
+
+openf () {
+  tmux capture-pane -J -p | rg -o '(https?)://.*[^>]' | fzf-tmux -d20 --multi --bind alt-a:select-all,alt-d:deselect-all | xargs open
+}
+
+gwtf() {
+  BRANCH=$(git for-each-ref --sort=-committerdate --format='%(refname:short)' refs/heads | fzf)
+  echo "Creating worktree: $BRANCH"
+  BASE_BRANCH=$(basename $BRANCH)
+  CURRENT_DIR=${PWD##*/}
+  git worktree add "../$CURRENT_DIR-$BASE_BRANCH" "$BRANCH"
+}
+
+letmein () {
+    echo "Usage: letmein FLAVOUR (dev | staging | staging-cn etc) SERVICE (campaign | email etc) ROLE (readonly | admin) MESSAGE"
+    if [ "$1" = "referral" ]; then
+        primary_id="8032-primary"
+    else
+        primary_id="primary"
+    fi
+    echo "Executing: infra access rds $1-$2-$primary_id $1 $3 -r '$4' -t 8h"
+    infra access rds "$1"-"$2"-"$primary_id" "$1" "$3" -r "$4" -t 8h
+}
+
+letmeinall () {
+        echo "Usage: letmein SERVICE (campaign | email etc) ROLE (readonly | admin) MESSAGE"
+        if [ "$1" = "referral" ]; then
+            primary_id="8032-primary"
+        else
+            primary_id="primary"
+        fi
+        echo "Executing: infra access rds (dev/staging/etc)-$1-$primary_id (dev/staging/etc) $2 -r '$3' -t 8h"
+        echo "dev:"
+        infra access rds dev-"$1"-"$primary_id" dev "$2" -r "$3" -t 8h
+        echo "staging:"
+        infra access rds staging-"$1"-"$primary_id" staging "$2" -r "$3" -t 8h
+        echo "staging-cn:"
+        infra access rds staging-cn-"$1"-"$primary_id" staging-cn "$2" -r "$3" -t 8h
+        echo "prod:"
+        infra access rds prod-"$1"-"$primary_id" prod "$2" -r "$3" -t 8h
+        echo "prod-cn:"
+        infra access rds prod-cn-"$1"-"$primary_id" prod-cn "$2" -r "$3" -t 8h
+}
+
+openall () {
+  echo "Usage: openall SERVICE (campaign | referral etc) ROLE (read | admin)"
+  echo "Executing: infra access rds (dev/staging/etc)-$1-$primary_id (dev/staging/etc) $2 -r '$3' -t 8h"
+  if [ "$1" = "referral" ]; then
+    primary_id="8032-primary"
+  else
+    primary_id="primary"
+  fi
+  echo "dev:"
+  tmux new-window -n "Dev: $1 Mysql" "infra mysql dev-$1-$primary_id -l $2; exec $SHELL"
+  #alias tmux-tab='tmux new-window -n "CustomTab" "your-command; exec $SHELL"'
+}
+
+zle -N openf_widget openf
+bindkey '^f' openf_widget
